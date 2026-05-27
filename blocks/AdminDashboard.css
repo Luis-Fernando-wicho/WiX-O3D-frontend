@@ -1,0 +1,111 @@
+.AdminDashboard {
+  min-height: 90dvh;
+  width: 80%;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  font-family: "Shrikhand", serif;
+  font-weight: 10;
+  font-style: normal;
+  letter-spacing: 1px;
+  font-size: 21px;
+}
+
+.AdminDashboard__add-order {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: "pointer";
+  margin: 15px;
+  background-color: black;
+}
+
+.AdminDashboard__orders {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.order {
+  border-bottom: 1px solid rgb(255, 255, 255);
+  padding: 11px;
+
+  background-color: black;
+}
+
+.order h3 {
+  margin: 0px 0px 27px;
+  justify-self: center;
+  font-size: 27px;
+  letter-spacing: 2px;
+}
+
+.order__code {
+  color: rgb(30, 255, 4);
+}
+
+.order__form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+}
+
+.form-group label {
+  font-size: 21px;
+}
+
+.form-group input {
+  height: 35px;
+  padding: 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  font-size: 15px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.order__buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 0px 30px;
+}
+
+.order__buttons label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-style: bold;
+  font-size: 21px;
+}
+
+.order__buttons input {
+  height: 100%;
+}
+
+.order__buttons button {
+  background-color: red;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  height: 35px;
+  width: clamp(100px, 30vw, 200px);
+
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 21px;
+}

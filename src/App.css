@@ -1,0 +1,16 @@
+.page {
+  background-color: black;
+  min-width: 300px;
+  max-width: 2000px;
+
+  height: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  font-family: "Shrikhand", serif;
+  font-weight: 400;
+  font-style: normal;
+}

@@ -1,0 +1,133 @@
+.address {
+  min-height: 90dvh;
+  width: 95%;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  font-family: "Shrikhand", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.address__logo {
+  width: clamp(200px, 11vw, 300px);
+
+  filter: invert(74%) sepia(94%) saturate(4323%) hue-rotate(84deg)
+    brightness(118%) contrast(119%); /* verde */
+
+  margin-bottom: 25px;
+}
+
+.address__button {
+  grid-column: span 2; /* Hace que se posicione en medio de las dos columnas */
+  justify-self: center; /* Lo centra horizontalmente */
+
+  width: 50%;
+  height: 45px; /* 👈 Te sugiero subirlo a 45px para que combine con la altura de tus inputs */
+  background-color: rgb(30, 255, 0);
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-radius: 30px;
+
+  font-family: "Shrikhand", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+/* //////////////////////////////////////////////////////// */
+.address-form {
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    minmax(0, 1fr)
+  ); /* Crea 2 columnas iguales */
+  gap: 20px; /* Separación entre campos */
+  max-width: 800px;
+  margin: 0 auto;
+
+  font-family: "Shrikhand", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Estilos de etiquetas y entradas */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.form-group input,
+.form-group select {
+  height: 45px;
+  padding: 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+/* Campos especiales */
+.full-width {
+  grid-column: span 2; /* Hace que el campo 'Estado' use las dos columnas */
+}
+
+.form-divider {
+  grid-column: span 2;
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #e5e5e5;
+  margin: 20px 0;
+}
+
+/* Contenedor especial para el teléfono */
+.phone-input-container {
+  display: flex;
+  gap: 0; /* Pegados uno al otro */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 45px;
+}
+
+.phone-input-container select {
+  border: none;
+  border-right: 1px solid #ccc;
+  border-radius: 0;
+  background-color: #fafafa;
+  padding-right: 20px;
+}
+
+.phone-input-container input {
+  border: none;
+  border-radius: 0;
+  flex-grow: 1;
+}
+
+/* Iconos de información rápidos */
+.info-icon {
+  color: #888;
+  cursor: help;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.form-group input:focus-visible,
+.form-group select:focus-visible {
+  outline: 3px solid rgb(30, 255, 0); /* Grosor, estilo (sólido) y tu color verde */
+  outline-offset: 0px; /* Asegura que la línea quede pegada al borde del input */
+}

@@ -10,7 +10,7 @@ function Header() {
         <img src={WIXOTEXT} alt="" className="header__logo-text" />
       </div>
 
-      <div class="header__links">
+      <div className="header__links">
         <a href="https://wa.me" className="header__link">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -19,9 +19,9 @@ function Header() {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             class="icon icon-tabler icons-tabler-outline icon-tabler-brand-whatsapp"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -42,9 +42,9 @@ function Header() {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             class="icon icon-tabler icons-tabler-outline icon-tabler-brand-instagram"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -61,9 +61,9 @@ function Header() {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             class="icon icon-tabler icons-tabler-outline icon-tabler-brand-facebook"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />

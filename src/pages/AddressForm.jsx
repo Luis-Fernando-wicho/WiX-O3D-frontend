@@ -5,6 +5,7 @@ import WiXLOGO from "../../public/LOGO-WiX-O-BYN.svg";
 import { useNavigate } from "react-router-dom";
 
 function AddressForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     calleNumero: "",
     numeroInterior: "",
@@ -18,9 +19,19 @@ function AddressForm() {
     correo: "",
   });
 
-  // 2. Corregimos la función para que actualice el estado correctamente
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (
+      name === "telefono" ||
+      name === "codigoPostal" ||
+      name === "numeroInterior"
+    ) {
+      const soloNumeros = value.replace(/\D/g, "");
+      setFormData({ ...formData, [name]: soloNumeros });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -30,7 +41,7 @@ function AddressForm() {
 
     if (!activeCode) {
       alert("Por favor, regresa y verifica tu código primero.");
-      return;
+      navigate("/");
     }
 
     fetch(`http://localhost:3000/api/codes/address/${activeCode}`, {
@@ -53,6 +64,10 @@ function AddressForm() {
       .catch((err) => alert(err.message));
   };
 
+  const todosLosCamposLlenos = Object.keys(formData)
+    .filter((clave) => clave !== "correo" && clave !== "numeroInterior")
+    .every((clave) => formData[clave].trim() !== "");
+
   return (
     <>
       <section className="address">
@@ -69,10 +84,13 @@ function AddressForm() {
               required
             />
           </div>
-          <div className="form-group">
+
+          <div className="form-group form-group-right">
             <label htmlFor="num-interior">Número interior</label>
+
             <input
-              type="text"
+              type="tel"
+              maxLength={10}
               id="num-interior"
               name="numeroInterior"
               value={formData.numeroInterior}
@@ -82,14 +100,17 @@ function AddressForm() {
           <div className="form-group">
             <label htmlFor="cp">Código postal</label>
             <input
-              type="text"
+              type="tel"
+              maxLength={5}
+              minLength={5}
               id="cp"
               name="codigoPostal"
               value={formData.codigoPostal}
               onChange={handleChange}
+              required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group form-group-right">
             <label htmlFor="colonia">Colonia</label>
             <input
               type="text"
@@ -97,6 +118,7 @@ function AddressForm() {
               name="colonia"
               value={formData.colonia}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="form-group">
@@ -107,9 +129,10 @@ function AddressForm() {
               name="ciudad"
               value={formData.ciudad}
               onChange={handleChange}
+              required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group form-group-right">
             <label htmlFor="estado">Estado</label>
             <input
               type="text"
@@ -117,6 +140,7 @@ function AddressForm() {
               name="estado"
               value={formData.estado}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="form-group">
@@ -129,8 +153,7 @@ function AddressForm() {
               onChange={handleChange}
             />
           </div>
-
-          <div className="form-group">
+          <div className="form-group form-group-right">
             <label htmlFor="nombre">Nombre completo</label>
             <input
               type="text"
@@ -138,21 +161,23 @@ function AddressForm() {
               name="nombreCompleto"
               value={formData.nombreCompleto}
               onChange={handleChange}
+              required
             />
           </div>
-
           <div className="form-group">
             <label htmlFor="telefono">Teléfono</label>
             <input
-              type="text"
+              type="tel"
+              maxLength={10}
+              minLength={10}
               id="telefono"
               name="telefono"
               value={formData.telefono}
               onChange={handleChange}
+              required
             />
           </div>
-
-          <div className="form-group">
+          <div className="form-group form-group-right">
             <label htmlFor="correo">Correo electrónico</label>
             <input
               type="email"
@@ -162,8 +187,11 @@ function AddressForm() {
               onChange={handleChange}
             />
           </div>
-
-          <button type="submit" className="address__button">
+          <button
+            type="submit"
+            className="address__button"
+            disabled={!todosLosCamposLlenos}
+          >
             SEND
           </button>
         </form>

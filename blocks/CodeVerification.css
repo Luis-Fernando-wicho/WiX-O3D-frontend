@@ -66,6 +66,20 @@
 
   border: none;
   cursor: pointer;
+
+  font-family: "Shrikhand", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.code__button:disabled {
+  background-color: white; /* Gris opaco */
+  color: gray;
+  cursor: not-allowed; /* Cambia el cursor a un símbolo de prohibido */
+  transform: none !important; /* Evita animaciones de hover mientras esté bloqueado */
+  font-family: "Shrikhand", serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .code input:focus-visible,

@@ -43,11 +43,17 @@ function CodeVerification() {
         <h1 className="code__title">CÓDIGO</h1>
         <input
           type="text"
+          maxLength={10}
+          minLength={10}
           value={code}
           onChange={handleChange}
           className="code__input"
         />
-        <button onClick={handleVerify} className="code__button">
+        <button
+          onClick={handleVerify}
+          className="code__button"
+          disabled={code.trim() === ""}
+        >
           SEND
         </button>
         {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}

@@ -24,6 +24,20 @@
   background-color: black;
 }
 
+.AdminDashboard__add-order img {
+  width: clamp(200px, 11vw, 300px);
+
+  filter: invert(74%) sepia(94%) saturate(4323%) hue-rotate(84deg)
+    brightness(118%) contrast(119%); /* verde */
+
+  margin-bottom: 25px;
+
+  &:hover {
+    cursor: "pointer";
+    scale: 1.1;
+  }
+}
+
 .AdminDashboard__orders {
   display: flex;
   flex-direction: column;
@@ -32,21 +46,95 @@
 }
 
 .order {
-  border-bottom: 1px solid rgb(255, 255, 255);
+  border-bottom: 1px solid rgb(0, 0, 0);
   padding: 11px;
 
   background-color: black;
 }
 
+.order__header-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0px 0px 15px;
+  user-select: none;
+}
+
+.order__arrow {
+  cursor: pointer;
+  font-size: 21px;
+  color: black;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
+  margin-left: 5px;
+  &:hover {
+    transform: scale(1.2);
+    color: rgb(30, 255, 0);
+  }
+}
+
+.order__arrow--open {
+  transform: rotate(180deg);
+  color: black;
+
+  &:hover {
+    transform: scale(1.2);
+    color: rgb(30, 255, 0);
+    transform: rotate(180deg);
+  }
+}
+
 .order h3 {
   margin: 0px 0px 27px;
   justify-self: center;
+
+  background-color: white;
+  color: black;
+
+  padding: 7px;
+  border-radius: 30px;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-style: bold;
   font-size: 27px;
-  letter-spacing: 2px;
+
+  gap: 10px;
+
+  width: 70%;
 }
 
 .order__code {
-  color: rgb(30, 255, 4);
+  color: black;
+  -webkit-text-stroke: 0.001px black;
+}
+
+.order__copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 22px; /* Tamaño del emoji o icono */
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.2);
+    filter: invert(74%) sepia(94%) saturate(4323%) hue-rotate(84deg)
+      brightness(118%) contrast(119%); /* verde */
+  }
+}
+
+.order__copy-btn:active {
+  transform: scale(0.9);
 }
 
 .order__form {
@@ -56,14 +144,25 @@
   margin-bottom: 15px;
 }
 
-.form-group {
+.order__form-animation {
+  animation: up_down 0.5s ease-out forwards;
 }
 
-.form-group label {
+.form-group__admin {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.form-group__admin label {
   font-size: 21px;
 }
 
-.form-group input {
+.form-group__admin input {
   height: 35px;
   padding: 0 12px;
   border: 1px solid #ccc;
@@ -97,8 +196,8 @@
 }
 
 .order__buttons button {
-  background-color: red;
-  color: white;
+  background-color: white;
+  color: black;
   border-radius: 20px;
   cursor: pointer;
   height: 35px;
@@ -108,4 +207,27 @@
   font-weight: 400;
   font-style: normal;
   font-size: 21px;
+
+  &:hover {
+    background-color: red;
+    color: black;
+    scale: 1.05;
+  }
+}
+
+.form-group__admin input:focus-visible,
+.form-group__admin select:focus-visible {
+  outline: 3px solid rgb(30, 255, 0); /* Grosor, estilo (sólido) y tu color verde */
+  outline-offset: 0px; /* Asegura que la línea quede pegada al borde del input */
+}
+
+@keyframes up_down {
+  0% {
+    opacity: 1;
+    transform: translateY(-70px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
 }

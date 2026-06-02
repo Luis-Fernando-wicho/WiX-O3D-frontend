@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CodeVerification.css";
 import WiXLOGO from "../../public/LOGO-WiX-O-BYN.svg";
-import Popup from "../pop-ups/Popup.jsx"; // Importamos el componente Popup
+import Popup from "../pop-ups/Popup.jsx";
 
 function CodeVerification() {
   const [code, setCode] = useState("");

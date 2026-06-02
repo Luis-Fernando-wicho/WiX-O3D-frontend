@@ -1,4 +1,4 @@
-.backdrop {
+.backdrop-delate {
   position: fixed;
   top: 0;
   left: 0;
@@ -20,7 +20,7 @@
   align-items: start;
 }
 
-.popup {
+.popup-delate {
   grid-area: popup;
   background-color: white;
   border-radius: 200px;
@@ -35,7 +35,49 @@
   border: 11px solid white;
 }
 
-.popup__close {
+.popup-delate__title {
+  font-size: clamp(20px, 10vw, 27px);
+  text-align: center;
+  margin: 0px;
+
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-style: bold;
+  color: black;
+}
+
+.popup-delate__icon {
+  height: clamp(40px, 20vw, 120px);
+}
+
+.popup-delate__actions {
+  width: 100%;
+  height: clamp(40px, 10vw, 50px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.popup-delate__btn {
+  background-color: black;
+  color: white;
+
+  height: 100%;
+  width: clamp(50px, 10vw, 150px);
+  border-radius: 100px;
+}
+
+.popup-delate__btn--confirm:hover {
+  background-color: red;
+  scale: 1.1;
+}
+
+.popup-delate__btn--cancel:hover {
+  scale: 1.1;
+}
+
+.popup-delate__close {
   grid-area: x;
   height: clamp(40px, 10vw, 50px);
   width: clamp(40px, 10vw, 50px);
@@ -45,29 +87,12 @@
   border-radius: 50%;
   cursor: pointer;
 
-  background-color: #000000;
-  &:hover {
-    scale: 1.1;
-  }
+  background-color: #00000000;
 }
 
-.popup__close img {
+.popup-delate__close img {
   width: clamp(40px, 10vw, 50px);
   height: clamp(40px, 10vw, 50px);
 
   filter: invert(1);
-}
-
-.popup__title {
-  font-size: clamp(20px, 10vw, 27px);
-  text-align: center;
-  margin: 0px;
-
-  font-family: "Concert One", sans-serif;
-  font-weight: 400;
-  font-style: bold;
-}
-
-.popup__icon {
-  height: clamp(40px, 20vw, 120px);
 }

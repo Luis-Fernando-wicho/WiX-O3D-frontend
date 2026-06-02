@@ -196,7 +196,7 @@
   height: 100%;
 }
 
-.order__buttons button {
+.buttons__delate {
   background-color: white;
   color: black;
   border-radius: 20px;
@@ -209,6 +209,9 @@
   font-style: normal;
   font-size: 21px;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
   &:hover {
     background-color: red;
     color: black;

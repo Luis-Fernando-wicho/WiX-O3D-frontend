@@ -1,15 +1,14 @@
+// src/components/ProtectedRoute.jsx
 import { Navigate, Outlet } from "react-router-dom";
 
-// isAllowed: un valor booleano que nos dirá si es admin o no
-// redirectPath: a dónde lo mandamos si no tiene permiso (por defecto al inicio)
-function ProtectedRoute({ isAllowed, redirectPath = "/" }) {
+const ProtectedRoute = ({ isAllowed, redirectTo = "/Login" }) => {
   if (!isAllowed) {
-    // Si no está permitido, lo redirigimos y reemplazamos el historial
-    return <Navigate to={redirectPath} replace />;
+    // Si no está permitido (no hay token o caducó), lo manda al Login
+    return <Navigate to={redirectTo} replace />;
   }
 
-  // Si está permitido, renderizamos la ruta hija (el AdminDashboard)
+  // Si está permitido, renderiza las rutas hijas (en este caso, AdminDashboard)
   return <Outlet />;
-}
+};
 
 export default ProtectedRoute;

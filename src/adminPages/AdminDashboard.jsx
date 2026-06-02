@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import "../../../blocks/AdminDashboard.css";
-import WiXLOGO from "../../../public/LOGO-WiX-O-BYN.svg";
-import COPYLOGO from "../../../public/copy.svg";
+import "./AdminDashboard.css";
+import WiXLOGO from "../../public/LOGO-WiX-O-BYN.svg";
+import COPYLOGO from "../../public/copy.svg";
 
-// Definimos la URL de tu backend local
 const API_URL = "http://localhost:3000/api/codes";
 
 const AdminDashboard = () => {
   const [pedidos, setPedidos] = useState([]);
 
-  // NUEVO ESTADO: Guarda un arreglo con los códigos de los pedidos que están abiertos
+  // Guarda un arreglo con los códigos de los pedidos que están abiertos
   const [pedidosExpandidos, setPedidosExpandidos] = useState([]);
 
   // 1. CARGAR PEDIDOS DESDE LA BASE DE DATOS AL ABRIR LA PÁGINA
@@ -24,7 +23,7 @@ const AdminDashboard = () => {
       );
   }, []);
 
-  // Función para generar el código único
+  // generar el código único
   const generarCodigo = () => {
     const ahora = new Date();
     const dia = String(ahora.getDate()).padStart(2, "0");
@@ -42,7 +41,7 @@ const AdminDashboard = () => {
     return `WX${dia}${hora}${mes}${letra1}${letra2}`;
   };
 
-  // 2. CREAR Y GUARDAR NUEVO PEDIDO EN BLANCO EN MONGO
+  // CREAR Y GUARDAR NUEVO PEDIDO EN BLANCO EN MONGO
   const agregarPedido = () => {
     const nuevoId = generarCodigo();
 
@@ -57,9 +56,12 @@ const AdminDashboard = () => {
       })
       .then((resData) => {
         const pedidoGuardado = resData.data || resData;
-        setPedidos([pedidoGuardado, ...pedidos]);
+        setPedidos([
+          pedidoGuardado,
+          ...pedidos,
+        ]); /* guarda el nuevo pedido antes de los pedidos anteriores */
 
-        // Opcional: Hace que el nuevo pedido aparezca expandido automáticamente
+        /* Hace que el nuevo pedido aparezca expandido automáticamente */
         setPedidosExpandidos((prev) => [...prev, nuevoId]);
       })
       .catch((err) =>
@@ -67,7 +69,7 @@ const AdminDashboard = () => {
       );
   };
 
-  // 3. ELIMINAR UN PEDIDO POR SU CÓDIGO DE LA BASE DE DATOS
+  //  ELIMINAR UN PEDIDO POR SU CÓDIGO DE LA BASE DE DATOS
   const borrarPedido = (codeABorrar) => {
     fetch(`${API_URL}/${codeABorrar}`, {
       method: "DELETE",
@@ -79,13 +81,13 @@ const AdminDashboard = () => {
             (pedido) => (pedido.code || pedido.id) !== codeABorrar,
           ),
         );
-        // También lo quitamos de la lista de expandidos por si acaso
+
         setPedidosExpandidos((prev) => prev.filter((c) => c !== codeABorrar));
       })
       .catch((err) => console.error("Error al eliminar de MongoDB:", err));
   };
 
-  // 4. ACTUALIZAR INPUTS O EL CHECKBOX DE ENVIADO
+  // ACTUALIZAR EL CHECKBOX DE ENVIADO
   const actualizarDatoPedido = (code, campo, valor) => {
     if (campo === "enviado") {
       fetch(`${API_URL}/enviado/${code}`, {
@@ -129,12 +131,10 @@ const AdminDashboard = () => {
         {pedidos.map((pedido) => {
           const currentCode = pedido.code || pedido.id;
 
-          // Averiguamos si este pedido específico debe mostrarse expandido
           const isExpanded = pedidosExpandidos.includes(currentCode);
 
           return (
             <div key={pedido._id || currentCode} className="order">
-              {/* Al hacer clic en el h3 se ejecuta el toggle */}
               <h3
                 className="order__header-toggle"
                 title="Haz clic para expandir o contraer"
@@ -158,7 +158,6 @@ const AdminDashboard = () => {
                 </span>
               </h3>
 
-              {/* RENDERIZADO CONDICIONAL: Solo si está expandido se muestra el formulario y botones */}
               {isExpanded && (
                 <div className="order__form-animation">
                   <div className="order__form">

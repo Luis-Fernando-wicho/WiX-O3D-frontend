@@ -170,6 +170,7 @@
   font-size: 15px;
   box-sizing: border-box;
   background-color: #fff;
+  border: 2px solid black;
 }
 
 .order__buttons {

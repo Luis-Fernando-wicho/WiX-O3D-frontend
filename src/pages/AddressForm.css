@@ -53,11 +53,8 @@
 /* //////////////////////////////////////////////////////// */
 .address-form {
   display: grid;
-  grid-template-columns: repeat(
-    2,
-    minmax(0, 1fr)
-  ); /* Crea 2 columnas iguales */
-  gap: 20px; /* Separación entre campos */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px 30px;
   max-width: 800px;
   margin: 0 auto;
 
@@ -86,10 +83,10 @@
 
 .form-group input,
 .form-group select {
+  box-sizing: border-box;
   height: 45px;
   padding: 0 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 30px;
   font-size: 15px;
   box-sizing: border-box;
   background-color: #fff;

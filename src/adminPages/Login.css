@@ -1,0 +1,114 @@
+.login {
+  min-height: 90dvh;
+  width: 95%;
+  color: white;
+  background-color: black;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Shrikhand", serif;
+  font-weight: 400;
+  font-style: normal;
+  height: 200%;
+}
+
+.login__logo {
+  width: clamp(250px, 50vw, 300px);
+  filter: invert(74%) sepia(94%) saturate(4323%) hue-rotate(84deg)
+    brightness(118%) contrast(119%); /* verde */
+  animation: aparecer 3s;
+}
+
+.login__welcome {
+  border: 200px;
+  margin: 20px 0px 20px;
+  font-size: clamp(21px, 5vw, 30px);
+  animation: aparecer 3s;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.login__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login__form-group label {
+  font-size: 21px;
+}
+
+.login__form-input {
+  width: clamp(275px, 50vw, 500px);
+  height: 70px;
+
+  padding: 0 5px;
+  font-size: clamp(12px, 4vw, 18px);
+
+  box-sizing: border-box;
+
+  text-transform: uppercase;
+  text-align: center;
+
+  border-radius: 30px;
+  margin-bottom: 15px;
+
+  border: 7px solid black;
+  animation: aparecer 3s;
+}
+
+.login__submit {
+  width: 50%;
+  height: 70px;
+
+  background-color: rgb(30, 255, 0);
+  font-size: clamp(12px, 4vw, 18px);
+
+  border-radius: 30px;
+
+  box-sizing: border-box;
+
+  text-transform: uppercase;
+  text-align: center;
+
+  background-color: rgb(30, 255, 0);
+
+  font-weight: bold;
+
+  border: none;
+  cursor: pointer;
+
+  font-family: "Shrikhand", serif;
+  font-weight: 400;
+  font-style: normal;
+
+  animation: aparecer 3s;
+
+  margin-top: 20px;
+}
+
+.login__submit:disabled {
+  background-color: white; /* Gris opaco */
+  color: gray;
+  cursor: not-allowed; /* Cambia el cursor a un símbolo de prohibido */
+  transform: none !important; /* Evita animaciones de hover mientras esté bloqueado */
+}
+
+.login__form-group input:focus-visible,
+.login__form-group select:focus-visible {
+  outline: 3px solid rgb(30, 255, 0); /* Grosor, estilo (sólido) y tu color verde */
+  outline-offset: 0px; /* Asegura que la línea quede pegada al borde del input */
+}

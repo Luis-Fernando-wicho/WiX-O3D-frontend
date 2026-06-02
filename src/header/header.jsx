@@ -22,7 +22,7 @@ function Header() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="icon icon-tabler icons-tabler-outline icon-tabler-brand-whatsapp"
+            className="icon icon-tabler icons-tabler-outline icon-tabler-brand-whatsapp"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9" />
@@ -45,7 +45,7 @@ function Header() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="icon icon-tabler icons-tabler-outline icon-tabler-brand-instagram"
+            className="icon icon-tabler icons-tabler-outline icon-tabler-brand-instagram"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M4 8a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4l0 -8" />
@@ -64,7 +64,7 @@ function Header() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            class="icon icon-tabler icons-tabler-outline icon-tabler-brand-facebook"
+            className="icon icon-tabler icons-tabler-outline icon-tabler-brand-facebook"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3" />

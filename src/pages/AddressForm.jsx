@@ -1,11 +1,19 @@
 import { useState } from "react";
-import "../../blocks/AddressForm.css";
+import "./AddressForm.css";
 import WiXLOGO from "../../public/LOGO-WiX-O-BYN.svg";
+import Popup from "../pop-ups/Popup.jsx";
 
 import { useNavigate } from "react-router-dom";
 
 function AddressForm() {
   const navigate = useNavigate();
+
+  const [popupState, setPopupState] = useState({
+    isOpen: false,
+    type: "",
+    message: "",
+  });
+
   const [formData, setFormData] = useState({
     calleNumero: "",
     numeroInterior: "",
@@ -40,8 +48,14 @@ function AddressForm() {
     const activeCode = localStorage.getItem("verifiedCode");
 
     if (!activeCode) {
-      alert("Por favor, regresa y verifica tu código primero.");
-      navigate("/");
+      setPopupState({
+        isOpen: true,
+        type: "error",
+        message: err.message,
+      });
+      setTimeout(() => {
+        navigate("/");
+      }, 5000);
     }
 
     fetch(`http://localhost:3000/api/codes/address/${activeCode}`, {
@@ -54,14 +68,36 @@ function AddressForm() {
         return res.json();
       })
       .then(() => {
-        alert(
-          "¡Dirección guardada con éxito! Tu pedido WiX-O está en proceso.",
-        );
+        setPopupState({
+          isOpen: true,
+          type: "success",
+          message:
+            "¡Direccion guardada con exito, pronto te notificaremos sobre tu envio!",
+        });
+
         localStorage.removeItem("verifiedCode");
 
-        navigate("/");
+        setTimeout(() => {
+          navigate("/");
+        }, 10000);
       })
-      .catch((err) => alert(err.message));
+      .catch((err) => {
+        setPopupState({
+          isOpen: true,
+          type: "error",
+          message: err.message,
+        });
+      });
+  };
+
+  // Función para manejar el cierre manual del popup
+  const handleClosePopup = () => {
+    setPopupState({ ...popupState, isOpen: false });
+
+    // Si el usuario cierra el popup manualmente y era de éxito, lo redirigimos
+    if (popupState.type === "success") {
+      navigate("/");
+    }
   };
 
   const todosLosCamposLlenos = Object.keys(formData)
@@ -196,6 +232,14 @@ function AddressForm() {
           </button>
         </form>
       </section>
+
+      {/* Renderizamos el Popup y le pasamos los valores del estado */}
+      <Popup
+        isOpen={popupState.isOpen}
+        type={popupState.type}
+        message={popupState.message}
+        onClose={handleClosePopup}
+      />
     </>
   );
 }

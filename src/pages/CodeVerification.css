@@ -16,12 +16,14 @@
   width: clamp(200px, 50vw, 300px);
   filter: invert(74%) sepia(94%) saturate(4323%) hue-rotate(84deg)
     brightness(118%) contrast(119%); /* verde */
+  animation: aparecer 3s;
 }
 
 .code__title {
   border: 200px;
   margin: 20px 0px 5px;
   font-size: clamp(21px, 5vw, 30px);
+  animation: aparecer 3s;
 }
 
 .code__input {
@@ -38,12 +40,9 @@
 
   border-radius: 30px;
   margin-bottom: 15px;
-}
 
-.code__input::placeholder {
-  color: rgb(91, 91, 91);
-  text-transform: none;
-  /* Puedes quitar el justify-self: center; de aquí ya que no hace efecto */
+  border: 7px solid black;
+  animation: aparecer 3s;
 }
 
 .code__button {
@@ -70,13 +69,15 @@
   font-family: "Shrikhand", serif;
   font-weight: 400;
   font-style: normal;
+
+  animation: aparecer 3s;
 }
 
 .code__button:disabled {
   background-color: white; /* Gris opaco */
   color: gray;
   cursor: not-allowed; /* Cambia el cursor a un símbolo de prohibido */
-  transform: none !important; /* Evita animaciones de hover mientras esté bloqueado */
+  transform: none; /* Evita animaciones de hover mientras esté bloqueado */
   font-family: "Shrikhand", serif;
   font-weight: 400;
   font-style: normal;
@@ -86,4 +87,13 @@
 .code select:focus-visible {
   outline: 3px solid rgb(30, 255, 0); /* Grosor, estilo (sólido) y tu color verde */
   outline-offset: 0px; /* Asegura que la línea quede pegada al borde del input */
+}
+@keyframes aparecer {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }

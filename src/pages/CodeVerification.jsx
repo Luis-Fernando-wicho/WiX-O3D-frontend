@@ -7,6 +7,8 @@ import Popup from "../pop-ups/Popup.jsx";
 function CodeVerification() {
   const [code, setCode] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [popupState, setPopupState] = useState({
     isOpen: false,
     type: "",
@@ -22,6 +24,8 @@ function CodeVerification() {
   const handleVerify = () => {
     if (!code) return;
 
+    setIsLoading(true);
+
     fetch(`https://wix-o3d-backend.onrender.com/api/codes/verify/${code}`)
       .then((res) => {
         if (!res.ok) {
@@ -32,7 +36,6 @@ function CodeVerification() {
       .then((data) => {
         localStorage.setItem("verifiedCode", code);
 
-        // Mostramos el popup de éxito
         setPopupState({
           isOpen: true,
           type: "success",
@@ -49,14 +52,15 @@ function CodeVerification() {
           type: "error",
           message: err.message,
         });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
-  // Función para manejar el cierre manual del popup
   const handleClosePopup = () => {
     setPopupState({ ...popupState, isOpen: false });
 
-    // Si el usuario cierra el popup manualmente y era de éxito, lo redirigimos
     if (popupState.type === "success") {
       navigate("/AddressForm");
     }
@@ -74,17 +78,17 @@ function CodeVerification() {
           value={code}
           onChange={handleChange}
           className="code__input"
+          disabled={isLoading}
         />
         <button
           onClick={handleVerify}
           className="code__button"
-          disabled={code.trim() === ""}
+          disabled={code.trim() === "" || isLoading}
         >
-          SEND
+          {isLoading ? <div className="spinner"></div> : "SEND"}
         </button>
       </section>
 
-      {/* Renderizamos el Popup y le pasamos los valores del estado */}
       <Popup
         isOpen={popupState.isOpen}
         type={popupState.type}

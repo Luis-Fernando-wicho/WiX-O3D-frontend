@@ -88,6 +88,27 @@
   outline: 3px solid rgb(30, 255, 0); /* Grosor, estilo (sólido) y tu color verde */
   outline-offset: 0px; /* Asegura que la línea quede pegada al borde del input */
 }
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  /* Color del círculo de fondo (semitransparente) */
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  /* Color de la línea que gira (blanco sólido) */
+  border-top-color: #ffffff;
+  animation: spin 1s ease-in-out infinite;
+
+  /* Centrar el spinner dentro del botón */
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes aparecer {
   0% {
     opacity: 0;

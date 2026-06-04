@@ -11,7 +11,11 @@ function Header() {
       </div>
 
       <div className="header__links">
-        <a href="https://wa.me" className="header__link">
+        <a
+          href="https://wa.me/527121803294"
+          className="header__link"
+          target="_blank"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -31,7 +35,7 @@ function Header() {
         </a>
 
         <a
-          href="https://instagram.com"
+          href="https://instagram.com/wix_o3d"
           target="_blank"
           className="header__link"
         >
@@ -53,7 +57,11 @@ function Header() {
             <path d="M16.5 7.5v.01" />
           </svg>
         </a>
-        <a href="https://facebook.com" target="_blank" className="header__link">
+        <a
+          href="https://www.facebook.com/profile.php?id=61556788583150"
+          target="_blank"
+          className="header__link"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

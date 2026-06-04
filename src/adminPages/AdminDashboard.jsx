@@ -5,7 +5,7 @@ import COPYLOGO from "../../public/copy.svg";
 import Delate from "../pop-ups/Delate.jsx";
 import TRASH from "../../public/trash.svg";
 
-const API_URL = "http://localhost:3000/api/codes";
+const API_URL = "https://wix-o3d-backend.onrender.com/api/codes";
 
 const AdminDashboard = () => {
   const [pedidos, setPedidos] = useState([]);

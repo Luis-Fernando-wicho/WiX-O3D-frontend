@@ -22,7 +22,7 @@ function CodeVerification() {
   const handleVerify = () => {
     if (!code) return;
 
-    fetch(`http://localhost:3000/api/codes/verify/${code}`)
+    fetch(`https://wix-o3d-backend.onrender.com/api/codes/verify/${code}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("El código ingresado no es válido o ya caducó.");

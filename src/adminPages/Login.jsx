@@ -4,7 +4,7 @@ import WiXLOGO from "../../public/LOGO-WiX-O-BYN.svg";
 
 import "./Login.css";
 
-const AUTH_API_URL = "http://localhost:3000/api/auth/login";
+const AUTH_API_URL = "https://wix-o3d-backend.onrender.com/api/auth/login";
 
 const Login = () => {
   const navigate = useNavigate();

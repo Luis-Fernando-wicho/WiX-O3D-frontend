@@ -58,11 +58,14 @@ function AddressForm() {
       }, 5000);
     }
 
-    fetch(`http://localhost:3000/api/codes/address/${activeCode}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    })
+    fetch(
+      `https://wix-o3d-backend.onrender.com/api/codes/address/${activeCode}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      },
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Error al guardar la dirección");
         return res.json();

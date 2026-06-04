@@ -14,27 +14,14 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import "./App.css";
 
 const checkAuth = () => {
-  const tokenDataString = localStorage.getItem("adminToken");
-  if (!tokenDataString) return false;
+  const token = localStorage.getItem("adminToken");
 
-  try {
-    const tokenData = JSON.parse(tokenDataString);
-    const now = new Date().getTime();
+  if (!token) return false;
 
-    if (now < tokenData.expiry) {
-      return true;
-    } else {
-      localStorage.removeItem("adminToken");
-      return false;
-    }
-  } catch (error) {
-    localStorage.removeItem("adminToken");
-    return false;
-  }
+  return true;
 };
 
 function App() {
-  // 1. Estado dinámico de autenticación
   const [isAdmin, setIsAdmin] = useState(checkAuth());
 
   const handleLoginSuccess = () => {
@@ -46,22 +33,18 @@ function App() {
       <div className="page">
         <Header />
         <Routes>
-          {/* 2. Las rutas fijas van PRIMERO */}
           <Route path="/" element={<CodeVerification />} />
           <Route path="/AddressForm" element={<AddressForm />} />
 
-          {/* Pasamos la función encargada de actualizar el estado al Login */}
           <Route
             path="/Login"
             element={<Login onLoginSuccess={handleLoginSuccess} />}
           />
 
-          {/* Rutas protegidas */}
           <Route element={<ProtectedRoute isAllowed={isAdmin} />}>
             <Route path="/AdminDashboard" element={<AdminDashboard />} />
           </Route>
 
-          {/* 3. El comodín de error '*' debe ir SIEMPRE al final de todo */}
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </div>

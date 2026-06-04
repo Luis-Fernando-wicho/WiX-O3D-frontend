@@ -39,13 +39,9 @@ const Login = ({ onLoginSuccess }) => {
       })
       .then((data) => {
         if (data.success) {
-          const tokenData = { value: data.token, expiry: data.expiry };
-          localStorage.setItem("adminToken", JSON.stringify(tokenData));
+          localStorage.setItem("adminToken", data.token);
 
-          // 2. DISPARAMOS EL CAMBIO DE ESTADO EN APP.JSX
           if (onLoginSuccess) onLoginSuccess();
-
-          // 3. Redirigimos de forma segura
           navigate("/AdminDashboard");
         } else {
           setError(data.message || "Error al iniciar sesión.");

@@ -54,7 +54,7 @@ const Login = () => {
           localStorage.setItem("adminToken", JSON.stringify(tokenData));
 
           // Acceso exitoso, redirigimos al dashboard
-          window.location.href = "/AdminDashboard";
+          navigate("/AdminDashboard");
         } else {
           setError(data.message || "Error al iniciar sesión.");
         }

@@ -6,7 +6,7 @@ import "./Login.css";
 
 const AUTH_API_URL = "https://wix-o3d-backend.onrender.com/api/auth/login";
 
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     user: "",
@@ -23,46 +23,36 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    setError(""); // Limpiar errores anteriores
+    setError("");
 
-    // Realizamos la consulta al servidor de forma segura
     fetch(AUTH_API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         user: formData.user,
         password: formData.password,
       }),
     })
       .then((res) => {
-        if (!res.ok) {
-          // Si el servidor responde con error (ej. 401), lanzar excepción
-          throw new Error("Usuario o contraseña incorrectos.");
-        }
+        if (!res.ok) throw new Error("Usuario o contraseña incorrectos.");
         return res.json();
       })
       .then((data) => {
         if (data.success) {
-          // Guardamos el token y el expiry provistos directamente por la base de datos
-          const tokenData = {
-            value: data.token,
-            expiry: data.expiry,
-          };
-
+          const tokenData = { value: data.token, expiry: data.expiry };
           localStorage.setItem("adminToken", JSON.stringify(tokenData));
 
-          // Acceso exitoso, redirigimos al dashboard
+          // 2. DISPARAMOS EL CAMBIO DE ESTADO EN APP.JSX
+          if (onLoginSuccess) onLoginSuccess();
+
+          // 3. Redirigimos de forma segura
           navigate("/AdminDashboard");
         } else {
           setError(data.message || "Error al iniciar sesión.");
         }
       })
       .catch((err) => {
-        setError(
-          err.message || "Error al conectar con el servidor de autenticación.",
-        );
+        setError(err.message || "Error al conectar con el servidor.");
       });
   };
 

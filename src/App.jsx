@@ -1,44 +1,33 @@
+import { useState } from "react"; // <-- Asegúrate de importar useState
 import { Routes, Route } from "react-router-dom";
-import Header from "./header/header.jsx";
-
-import CodeVerification from "./pages/CodeVerification.jsx";
-import AddressForm from "./pages/AddressForm.jsx";
-
-import Login from "./adminPages/Login.jsx";
-import AdminDashboard from "./adminPages/AdminDashboard.jsx";
-
-import PageNotFound from "./pages/PageNotFound.jsx";
-
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
-
-import "./App.css";
+// ... tus demás importaciones (Header, Login, AdminDashboard, etc.) ...
 
 const checkAuth = () => {
   const tokenDataString = localStorage.getItem("adminToken");
   if (!tokenDataString) return false;
-
   try {
     const tokenData = JSON.parse(tokenDataString);
     const now = new Date().getTime();
-
-    // Si la fecha actual es menor a la fecha de expiración, es válido
     if (now < tokenData.expiry) {
       return true;
     } else {
-      // Si ya pasó 1 semana, borramos el token caducado
       localStorage.removeItem("adminToken");
       return false;
     }
   } catch (error) {
-    // Si hay un error al leer el JSON, por seguridad borramos y denegamos
     localStorage.removeItem("adminToken");
     return false;
   }
 };
 
 function App() {
-  // Evaluamos la autorización en cada render
-  const isAdmin = checkAuth();
+  // Creamos un estado dinámico iniciado con la validación del token
+  const [isAdmin, setIsAdmin] = useState(checkAuth());
+
+  // Función para avisar a App que el usuario ya se autenticó
+  const handleLoginSuccess = () => {
+    setIsAdmin(true);
+  };
 
   return (
     <>
@@ -48,8 +37,14 @@ function App() {
           <Route path="*" element={<PageNotFound />} />
           <Route path="/" element={<CodeVerification />} />
           <Route path="/AddressForm" element={<AddressForm />} />
-          <Route path="/Login" element={<Login />} />
 
+          {/* PASAMOS LA FUNCIÓN AL LOGIN */}
+          <Route
+            path="/Login"
+            element={<Login onLoginSuccess={handleLoginSuccess} />}
+          />
+
+          {/* PROTECTED ROUTE EVALÚA EL ESTADO DINÁMICO */}
           <Route element={<ProtectedRoute isAllowed={isAdmin} />}>
             <Route path="/AdminDashboard" element={<AdminDashboard />} />
           </Route>

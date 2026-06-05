@@ -10,6 +10,8 @@ const API_URL = "https://wix-o3d-backend.onrender.com/api/codes";
 const AdminDashboard = () => {
   const [pedidos, setPedidos] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // Ahora guardamos si está abierto y el código del pedido en la mira
   const [delateState, setDelateState] = useState({
     isOpen: false,
@@ -50,6 +52,8 @@ const AdminDashboard = () => {
   const agregarPedido = () => {
     const nuevoId = generarCodigo();
 
+    setIsLoading(true);
+
     fetch(`${API_URL}/generate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -64,9 +68,11 @@ const AdminDashboard = () => {
         setPedidos([pedidoGuardado, ...pedidos]);
         setPedidosExpandidos((prev) => [...prev, nuevoId]);
       })
-      .catch((err) =>
-        console.error("Error al guardar código en MongoDB:", err),
-      );
+      .catch((err) => console.error("Error al guardar código en MongoDB:", err))
+
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   // Esta función ahora solo se ejecuta cuando el usuario presiona "Sí" en el popup
@@ -119,8 +125,20 @@ const AdminDashboard = () => {
 
   return (
     <div className="AdminDashboard">
-      <button onClick={agregarPedido} className="AdminDashboard__add-order">
-        <img src={WiXLOGO} alt="" title="Haz clic agregar pedido" />
+      <button
+        onClick={agregarPedido}
+        className="AdminDashboard__add-order"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <div className="spinner"></div>
+        ) : (
+          <img
+            src={WiXLOGO}
+            alt="Logo WiX-O"
+            title="Haz clic para agregar pedido"
+          />
+        )}
       </button>
 
       <div className="AdminDashboard__orders">

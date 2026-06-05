@@ -56,6 +56,8 @@
   height: clamp(40px, 10vw, 50px);
 
   filter: invert(1);
+
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .popup__title {

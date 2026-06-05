@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 function AddressForm() {
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [popupState, setPopupState] = useState({
     isOpen: false,
     type: "",
@@ -58,6 +60,8 @@ function AddressForm() {
       }, 5000);
     }
 
+    setIsLoading(true);
+
     fetch(
       `https://wix-o3d-backend.onrender.com/api/codes/address/${activeCode}`,
       {
@@ -90,6 +94,10 @@ function AddressForm() {
           type: "error",
           message: err.message,
         });
+      })
+
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -121,6 +129,7 @@ function AddressForm() {
               value={formData.calleNumero}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -134,6 +143,7 @@ function AddressForm() {
               name="numeroInterior"
               value={formData.numeroInterior}
               onChange={handleChange}
+              disabled={isLoading}
             />
           </div>
           <div className="form-group">
@@ -147,6 +157,7 @@ function AddressForm() {
               value={formData.codigoPostal}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="form-group form-group-right">
@@ -158,6 +169,7 @@ function AddressForm() {
               value={formData.colonia}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="form-group">
@@ -169,6 +181,7 @@ function AddressForm() {
               value={formData.ciudad}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="form-group form-group-right">
@@ -180,6 +193,7 @@ function AddressForm() {
               value={formData.estado}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="form-group">
@@ -190,6 +204,7 @@ function AddressForm() {
               name="referencia"
               value={formData.referencia}
               onChange={handleChange}
+              disabled={isLoading}
             />
           </div>
           <div className="form-group form-group-right">
@@ -201,6 +216,7 @@ function AddressForm() {
               value={formData.nombreCompleto}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="form-group">
@@ -214,6 +230,7 @@ function AddressForm() {
               value={formData.telefono}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="form-group form-group-right">
@@ -224,14 +241,15 @@ function AddressForm() {
               name="correo"
               value={formData.correo}
               onChange={handleChange}
+              disabled={isLoading}
             />
           </div>
           <button
             type="submit"
             className="address__button"
-            disabled={!todosLosCamposLlenos}
+            disabled={!todosLosCamposLlenos === "" || isLoading}
           >
-            SEND
+            {isLoading ? <div className="spinner"></div> : "SEND"}
           </button>
         </form>
       </section>

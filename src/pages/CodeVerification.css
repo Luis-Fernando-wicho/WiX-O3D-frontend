@@ -93,7 +93,7 @@
   width: 20px;
   height: 20px;
   /* Color del círculo de fondo (semitransparente) */
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(0, 0, 0, 0.3);
   border-radius: 50%;
   /* Color de la línea que gira (blanco sólido) */
   border-top-color: #ffffff;

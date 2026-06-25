@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./CodeVerification.css";
 import WiXLOGO from "../../public/LOGO-WiX-O-BYN.svg";
 import Popup from "../pop-ups/Popup.jsx";
+import PROTECT from "../../public/shield-check.svg";
 
 function CodeVerification() {
   const [code, setCode] = useState("");
@@ -87,6 +88,13 @@ function CodeVerification() {
         >
           {isLoading ? <div className="spinner"></div> : "SEND"}
         </button>
+        <div className="protect">
+          <img src={PROTECT} alt="" />
+          <p>
+            Compra Protegida. Recibe el producto sin daños o te devolvemos tu
+            dinero.
+          </p>
+        </div>
       </section>
 
       <Popup

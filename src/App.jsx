@@ -7,6 +7,7 @@ import AddressForm from "./pages/AddressForm.jsx";
 
 import Login from "./adminPages/Login.jsx";
 import AdminDashboard from "./adminPages/AdminDashboard.jsx";
+import Orders from "./adminPages/Orders.jsx";
 
 import PageNotFound from "./pages/PageNotFound.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -35,6 +36,7 @@ function App() {
         <Routes>
           <Route path="/" element={<CodeVerification />} />
           <Route path="/AddressForm" element={<AddressForm />} />
+          <Route path="/orders" element={<Orders />} />
 
           <Route
             path="/Login"

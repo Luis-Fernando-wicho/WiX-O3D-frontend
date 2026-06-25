@@ -1,0 +1,240 @@
+.orders {
+  width: 90%;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.orders__add-btn {
+  width: clamp(120px, 15vw, 200px);
+  background-color: black;
+  color: white;
+  border-radius: 10px;
+  padding: 8px;
+  border: 1px solid white;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: clamp(12px, 1vw, 20px);
+
+  &:hover {
+    scale: 1.05;
+  }
+}
+
+.orders__section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.manufacturing__title {
+  padding-left: 20px;
+  border-bottom: 3px solid red;
+  color: red;
+  width: 100%;
+  text-align: start;
+  margin: 10px 0px;
+  font-style: italic;
+  font-size: clamp(12px, 3vw, 30px);
+}
+.shipments__title {
+  padding-left: 20px;
+  border-bottom: 3px solid yellow;
+  color: yellow;
+  width: 100%;
+  text-align: start;
+  margin: 10px 0px;
+  font-style: italic;
+  font-size: clamp(12px, 3vw, 30px);
+}
+.realized__title {
+  padding-left: 20px;
+  border-bottom: 3px solid rgb(30, 255, 0);
+  color: rgb(30, 255, 0);
+  width: 100%;
+  text-align: start;
+  margin: 10px 0px;
+  font-style: italic;
+  font-size: clamp(12px, 3vw, 30px);
+}
+/* ////////////////////////////////////////////////////////////// */
+
+.order-card {
+  width: 100%;
+  margin-bottom: clamp(20px, 3vw, 30px);
+  padding-bottom: clamp(20px, 3vw, 30px);
+  border-bottom: 1px solid gray;
+}
+
+.order-headers {
+  font-weight: bold;
+  padding-bottom: clamp(7px, 1vw, 10px);
+  margin-bottom: clamp(15px, 2vw, 20px);
+
+  border-bottom: 3px solid white;
+}
+
+.order-grid {
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 2fr 2fr 2fr 0.2fr 2fr 2fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.order-grid-realized {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr 2fr 2fr 2fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.order-grid label,
+.order-grid-realized label {
+  text-align: center;
+  font-size: clamp(10px, 1vw, 16px);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.col-stretch input {
+  height: 100%;
+
+  flex-grow: 1;
+  resize: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.col-switch {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+.col-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.order-grid input,
+.order-grid textarea,
+.order-grid-realized input {
+  width: 100%;
+  height: clamp(25px, 3vw, 30px);
+  border-radius: 20px;
+  border: none;
+  box-sizing: border-box;
+  outline: none;
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-size: clamp(7px, 1vw, 13px);
+
+  text-align: center;
+
+  background-color: black;
+  color: white;
+  border-bottom: solid 2px white;
+}
+
+.order-grid input[readonly],
+.order-grid-realized input[readonly] {
+  background-color: transparent;
+  border-bottom: 2px dashed gray;
+  cursor: default;
+}
+
+/* Botones redondos de + y - */
+.btn-round {
+  width: clamp(12px, 2vw, 20px);
+  height: clamp(12px, 2vw, 20px);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 12px; /* Signos + y - más pequeños */
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: black;
+  color: white;
+  border: solid 1px white;
+}
+
+.btn-round:active {
+  transform: scale(0.9);
+}
+
+/* //////// SWITCH TOGGLE (REDONDO) //////// */
+
+/* Contenedor del switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: clamp(12px, 2vw, 17px);
+  height: clamp(12px, 2vw, 17px);
+  cursor: pointer;
+}
+
+/* Ocultamos el checkbox nativo pero lo dejamos accesible */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* El "botón" falso que vemos en pantalla */
+.switch::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ff4d4d; /* Rojo cuando está apagado */
+  border-radius: 50%;
+  border: none;
+  transition:
+    background-color 0.3s ease,
+    transform 0.1s ease;
+}
+
+/* Cuando el checkbox real está seleccionado (checked), cambiamos el color a verde */
+.switch input:checked + ::before, 
+.switch input:checked ~ ::before, /* Selector seguro para asegurar compatibilidad */
+.switch:has(input:checked)::before {
+  background-color: #4cd137; /* Verde cuando está encendido */
+}
+
+/* Efecto opcional de pulsación al hacer click */
+.switch:active::before {
+  transform: scale(0.9);
+}
+
+.switch[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  color: black;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+}

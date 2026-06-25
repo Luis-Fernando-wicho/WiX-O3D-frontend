@@ -103,6 +103,29 @@
   margin: 0 auto;
 }
 
+.protect {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: clamp(225px, 45vw, 400px);
+  gap: 12px;
+  margin-top: 17px;
+}
+
+.protect img {
+  height: clamp(20px, 4vw, 30px);
+  width: clamp(20px, 4vw, 30px);
+  filter: brightness(0) invert(1);
+  align-self: center;
+}
+
+.protect p {
+  font-family: "Concert One", sans-serif;
+  font-weight: 400;
+  font-size: clamp(11px, 2vw, 17px);
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

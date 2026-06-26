@@ -10,10 +10,14 @@ function Orders() {
 
   // 1. Cargar las órdenes desde MongoDB al abrir la página
   useEffect(() => {
+    setIsLoading(true);
     fetch(API_URL)
       .then((res) => res.json())
       .then((data) => setOrders(data))
-      .catch((err) => console.error("Error al cargar órdenes:", err));
+      .catch((err) => console.error("Error al cargar órdenes:", err))
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   // Función auxiliar para actualizar la base de datos y sincronizar los _id reales
@@ -190,307 +194,363 @@ function Orders() {
       {/* --- SECCIÓN: POR FABRICAR --- */}
       <section className="orders__section">
         <h1 className="manufacturing__title">Por fabricar</h1>
-        {porFabricar.length > 0 && (
-          <div className="order-grid order-headers">
-            <label>Cliente</label>
-            <label></label>
-            <label>Producto</label>
-            <label>Precio</label>
-            <label>Cantidad</label>
-            <label>Fab</label>
-            <label>Adelanto</label>
-            <label>Total</label>
-          </div>
-        )}
-        {porFabricar.map((order) => (
-          <div className="order-card" key={order._id}>
-            <div className="order-grid">
-              <div className="col col-stretch">
-                <input
-                  placeholder="Nombre"
-                  value={order.client}
-                  onChange={(e) => updateOrder(order, "client", e.target.value)}
-                  onBlur={() => handleInputBlur(order._id)} // GUARDA EN BD AL SALIR DEL CUADRO
-                />
+
+        {isLoading ? (
+          <div className="spinner"></div>
+        ) : (
+          <>
+            {porFabricar.length > 0 && (
+              <div className="order-grid order-headers">
+                <label>Cliente</label>
+                <label></label>
+                <label>Producto</label>
+                <label>Precio</label>
+                <label>Cantidad</label>
+                <label>Fab</label>
+                <label>Adelanto</label>
+                <label>Total</label>
               </div>
-              <div className="col col-center">
-                <button className="btn-round" onClick={() => addProduct(order)}>
-                  +
-                </button>
-                <button
-                  className="btn-round"
-                  onClick={() => removeProduct(order)}
-                >
-                  -
-                </button>
-              </div>
-              <div className="col">
-                {order.productos.map((p) => (
-                  <input
-                    key={p._id || p.tempId}
-                    placeholder="Producto"
-                    value={p.name}
-                    onChange={(e) =>
-                      updateProduct(
-                        order,
-                        p._id || p.tempId,
-                        "name",
-                        e.target.value,
-                      )
-                    }
-                    onBlur={() => handleInputBlur(order._id)}
-                  />
-                ))}
-              </div>
-              <div className="col">
-                {order.productos.map((p) => (
-                  <input
-                    key={p._id || p.tempId}
-                    type="number"
-                    placeholder="Precio"
-                    value={p.price}
-                    onChange={(e) =>
-                      updateProduct(
-                        order,
-                        p._id || p.tempId,
-                        "price",
-                        e.target.value,
-                      )
-                    }
-                    onBlur={() => handleInputBlur(order._id)}
-                  />
-                ))}
-              </div>
-              <div className="col">
-                {order.productos.map((p) => (
-                  <input
-                    key={p._id || p.tempId}
-                    type="number"
-                    placeholder="Cant"
-                    value={p.quantity}
-                    onChange={(e) =>
-                      updateProduct(
-                        order,
-                        p._id || p.tempId,
-                        "quantity",
-                        e.target.value,
-                      )
-                    }
-                    onBlur={() => handleInputBlur(order._id)}
-                  />
-                ))}
-              </div>
-              <div className="col col-switch">
-                {order.productos.map((p) => (
-                  <label className="switch" key={p._id || p.tempId}>
+            )}
+            {porFabricar.map((order) => (
+              <div className="order-card" key={order._id}>
+                <div className="order-grid">
+                  <div className="col col-stretch">
                     <input
-                      type="checkbox"
-                      checked={p.isFabricated}
+                      placeholder="Nombre"
+                      value={order.client}
                       onChange={(e) =>
-                        updateProduct(
-                          order,
-                          p._id || p.tempId,
-                          "isFabricated",
-                          e.target.checked,
-                        )
+                        updateOrder(order, "client", e.target.value)
                       }
+                      onBlur={() => handleInputBlur(order._id)}
                     />
-                  </label>
-                ))}
+                  </div>
+                  <div className="col col-center">
+                    <button
+                      className="btn-round"
+                      onClick={() => addProduct(order)}
+                    >
+                      +
+                    </button>
+                    <button
+                      className="btn-round"
+                      onClick={() => removeProduct(order)}
+                    >
+                      -
+                    </button>
+                  </div>
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        placeholder="Producto"
+                        value={p.name}
+                        onChange={(e) =>
+                          updateProduct(
+                            order,
+                            p._id || p.tempId,
+                            "name",
+                            e.target.value,
+                          )
+                        }
+                        onBlur={() => handleInputBlur(order._id)}
+                      />
+                    ))}
+                  </div>
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        type="text"
+                        placeholder="$0.00"
+                        value={p.price ? `$${p.price}` : ""}
+                        onChange={(e) => {
+                          const rawValue = e.target.value.replace(
+                            /[^0-9.]/g,
+                            "",
+                          );
+                          updateProduct(
+                            order,
+                            p._id || p.tempId,
+                            "price",
+                            rawValue,
+                          );
+                        }}
+                        onBlur={() => handleInputBlur(order._id)}
+                      />
+                    ))}
+                  </div>
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        type="number"
+                        placeholder="Cant"
+                        value={p.quantity}
+                        onChange={(e) =>
+                          updateProduct(
+                            order,
+                            p._id || p.tempId,
+                            "quantity",
+                            e.target.value,
+                          )
+                        }
+                        onBlur={() => handleInputBlur(order._id)}
+                      />
+                    ))}
+                  </div>
+                  <div className="col col-switch">
+                    {order.productos.map((p) => (
+                      <label className="switch" key={p._id || p.tempId}>
+                        <input
+                          type="checkbox"
+                          checked={p.isFabricated}
+                          onChange={(e) =>
+                            updateProduct(
+                              order,
+                              p._id || p.tempId,
+                              "isFabricated",
+                              e.target.checked,
+                            )
+                          }
+                        />
+                      </label>
+                    ))}
+                  </div>
+                  <div className="col col-stretch">
+                    <input
+                      type="text"
+                      placeholder="$0.00"
+                      value={order.adelanto ? `$${order.adelanto}` : ""}
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/[^0-9.]/g, "");
+                        updateOrder(order, "adelanto", rawValue);
+                      }}
+                      onBlur={() => handleInputBlur(order._id)}
+                    />
+                  </div>
+                  <div className="col col-stretch">
+                    <input
+                      readOnly
+                      value={`$${calculateTotal(order).toFixed(2)}`}
+                      style={{ color: "#4cd137" }}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="col col-stretch">
-                <input
-                  type="number"
-                  placeholder="$0.00"
-                  value={order.adelanto}
-                  onChange={(e) =>
-                    updateOrder(order, "adelanto", e.target.value)
-                  }
-                  onBlur={() => handleInputBlur(order._id)}
-                />
-              </div>
-              <div className="col col-stretch">
-                <input
-                  readOnly
-                  value={`$${calculateTotal(order).toFixed(2)}`}
-                  style={{ color: "#4cd137" }}
-                />
-              </div>
-            </div>
-          </div>
-        ))}
+            ))}
+          </>
+        )}
       </section>
 
       {/* --- SECCIÓN: POR ENVIAR --- */}
       <section className="orders__section">
         <h1 className="shipments__title">Por enviar</h1>
-        {porEnviar.length > 0 && (
-          <div className="order-grid order-headers">
-            <label>Cliente</label>
-            <label>E / R</label>
-            <label>Producto</label>
-            <label>Precio</label>
-            <label>Cantidad</label>
-            <label>Fab</label>
-            <label>Adelanto</label>
-            <label>Total</label>
-          </div>
-        )}
-        {porEnviar.map((order) => (
-          <div className="order-card" key={order._id}>
-            <div className="order-grid">
-              <div className="col col-stretch">
-                <input
-                  placeholder="Nombre"
-                  value={order.client}
-                  onChange={(e) => updateOrder(order, "client", e.target.value)}
-                  onBlur={() => handleInputBlur(order._id)}
-                />
+
+        {isLoading ? (
+          <div className="spinner"></div>
+        ) : (
+          <>
+            {porEnviar.length > 0 && (
+              <div className="order-grid order-headers">
+                <label>Cliente</label>
+                <label>E/R</label>
+                <label>Producto</label>
+                <label>Precio</label>
+                <label>Cantidad</label>
+                <label>Fab</label>
+                <label>Adelanto</label>
+                <label>Total</label>
               </div>
-              <div className="col col-center">
-                <label className="switch" title="Enviado">
-                  <input
-                    type="checkbox"
-                    checked={order.isEnviado}
-                    onChange={(e) =>
-                      updateOrder(order, "isEnviado", e.target.checked)
-                    }
-                  />
-                </label>
-                <label className="switch" title="Recibido">
-                  <input
-                    type="checkbox"
-                    checked={order.isRecibido}
-                    onChange={(e) =>
-                      updateOrder(order, "isRecibido", e.target.checked)
-                    }
-                  />
-                </label>
-              </div>
-              <div className="col">
-                {order.productos.map((p) => (
-                  <input key={p._id || p.tempId} value={p.name} readOnly />
-                ))}
-              </div>
-              <div className="col">
-                {order.productos.map((p) => (
-                  <input key={p._id || p.tempId} value={p.price} readOnly />
-                ))}
-              </div>
-              <div className="col">
-                {order.productos.map((p) => (
-                  <input key={p._id || p.tempId} value={p.quantity} readOnly />
-                ))}
-              </div>
-              <div className="col col-switch">
-                {order.productos.map((p) => (
-                  <label className="switch" key={p._id || p.tempId}>
+            )}
+            {porEnviar.map((order) => (
+              <div className="order-card" key={order._id}>
+                <div className="order-grid">
+                  <div className="col col-stretch">
                     <input
-                      type="checkbox"
-                      checked={p.isFabricated}
+                      placeholder="Nombre"
+                      value={order.client}
                       onChange={(e) =>
-                        updateProduct(
-                          order,
-                          p._id || p.tempId,
-                          "isFabricated",
-                          e.target.checked,
-                        )
+                        updateOrder(order, "client", e.target.value)
                       }
+                      onBlur={() => handleInputBlur(order._id)}
                     />
-                  </label>
-                ))}
+                  </div>
+                  <div className="col col-center">
+                    <label className="switch" title="Enviado">
+                      <input
+                        type="checkbox"
+                        checked={order.isEnviado}
+                        onChange={(e) =>
+                          updateOrder(order, "isEnviado", e.target.checked)
+                        }
+                      />
+                    </label>
+                    <label className="switch" title="Recibido">
+                      <input
+                        type="checkbox"
+                        checked={order.isRecibido}
+                        onChange={(e) =>
+                          updateOrder(order, "isRecibido", e.target.checked)
+                        }
+                      />
+                    </label>
+                  </div>
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input key={p._id || p.tempId} value={p.name} readOnly />
+                    ))}
+                  </div>
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        value={p.price ? `$${p.price}` : ""}
+                        readOnly
+                      />
+                    ))}
+                  </div>
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        value={p.quantity}
+                        readOnly
+                      />
+                    ))}
+                  </div>
+                  <div className="col col-switch">
+                    {order.productos.map((p) => (
+                      <label className="switch" key={p._id || p.tempId}>
+                        <input
+                          type="checkbox"
+                          checked={p.isFabricated}
+                          onChange={(e) =>
+                            updateProduct(
+                              order,
+                              p._id || p.tempId,
+                              "isFabricated",
+                              e.target.checked,
+                            )
+                          }
+                        />
+                      </label>
+                    ))}
+                  </div>
+                  <div className="col col-stretch">
+                    <input
+                      type="text"
+                      placeholder="$0.00"
+                      value={order.adelanto ? `$${order.adelanto}` : ""}
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/[^0-9.]/g, "");
+                        updateOrder(order, "adelanto", rawValue);
+                      }}
+                      onBlur={() => handleInputBlur(order._id)}
+                    />
+                  </div>
+                  <div className="col col-stretch">
+                    <input
+                      readOnly
+                      value={`$${calculateTotal(order).toFixed(2)}`}
+                      style={{ color: "#4cd137" }}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="col col-stretch">
-                <input
-                  type="number"
-                  value={order.adelanto}
-                  onChange={(e) =>
-                    updateOrder(order, "adelanto", e.target.value)
-                  }
-                  onBlur={() => handleInputBlur(order._id)}
-                />
-              </div>
-              <div className="col col-stretch">
-                <input
-                  readOnly
-                  value={`$${calculateTotal(order).toFixed(2)}`}
-                  style={{ color: "#4cd137" }}
-                />
-              </div>
-            </div>
-          </div>
-        ))}
+            ))}
+          </>
+        )}
       </section>
 
       {/* --- SECCIÓN: REALIZADO --- */}
       <section className="orders__section">
         <h1 className="realized__title">Realizado</h1>
-        {realizado.length > 0 && (
-          <div className="order-grid-realized order-headers">
-            <label>Cliente</label>
-            <label>Producto</label>
-            <label>Precio</label>
-            <label>Cantidad</label>
-            <label>Adelanto</label>
-            <label>Deuda Pendiente</label>
-          </div>
-        )}
-        {realizado.map((order) => {
-          const isPaid = calculateTotal(order) === 0;
-          return (
-            <div
-              className="order-card"
-              key={order._id}
-              style={{ opacity: isPaid ? 0.3 : 1 }}
-            >
-              <div className="order-grid-realized">
-                <div className="col col-stretch">
-                  <input value={order.client} readOnly />
-                </div>
-                <div className="col">
-                  {order.productos.map((p) => (
-                    <input key={p._id || p.tempId} value={p.name} readOnly />
-                  ))}
-                </div>
-                <div className="col">
-                  {order.productos.map((p) => (
-                    <input key={p._id || p.tempId} value={p.price} readOnly />
-                  ))}
-                </div>
-                <div className="col">
-                  {order.productos.map((p) => (
-                    <input
-                      key={p._id || p.tempId}
-                      value={p.quantity}
-                      readOnly
-                    />
-                  ))}
-                </div>
-                <div className="col col-stretch">
-                  <input
-                    type="number"
-                    value={order.adelanto}
-                    onChange={(e) =>
-                      updateOrder(order, "adelanto", e.target.value)
-                    }
-                    onBlur={() => handleInputBlur(order._id)}
-                    style={{ borderBottom: "2px solid yellow" }}
-                  />
-                </div>
-                <div className="col col-stretch">
-                  <input
-                    readOnly
-                    value={`$${calculateTotal(order).toFixed(2)}`}
-                    style={{
-                      color: isPaid ? "gray" : "#ff4d4d",
-                      fontWeight: "bold",
-                    }}
-                  />
-                </div>
+
+        {isLoading ? (
+          <div className="spinner"></div>
+        ) : (
+          <>
+            {realizado.length > 0 && (
+              <div className="order-grid-realized order-headers">
+                <label>Cliente</label>
+                <label>Producto</label>
+                <label>Precio</label>
+                <label>Cantidad</label>
+                <label>Adelanto</label>
+                <label>Deuda</label>
               </div>
-            </div>
-          );
-        })}
+            )}
+            {realizado.map((order) => {
+              const isPaid = calculateTotal(order) === 0;
+              return (
+                <div
+                  className="order-card"
+                  key={order._id}
+                  style={{ opacity: isPaid ? 0.3 : 1 }}
+                >
+                  <div className="order-grid-realized">
+                    <div className="col col-stretch">
+                      <input value={order.client} readOnly />
+                    </div>
+                    <div className="col">
+                      {order.productos.map((p) => (
+                        <input
+                          key={p._id || p.tempId}
+                          value={p.name}
+                          readOnly
+                        />
+                      ))}
+                    </div>
+                    <div className="col">
+                      {order.productos.map((p) => (
+                        <input
+                          key={p._id || p.tempId}
+                          value={p.price ? `$${p.price}` : ""}
+                          readOnly
+                        />
+                      ))}
+                    </div>
+                    <div className="col">
+                      {order.productos.map((p) => (
+                        <input
+                          key={p._id || p.tempId}
+                          value={p.quantity}
+                          readOnly
+                        />
+                      ))}
+                    </div>
+                    <div className="col col-stretch">
+                      <input
+                        type="text"
+                        placeholder="$0.00"
+                        value={order.adelanto ? `$${order.adelanto}` : ""}
+                        onChange={(e) => {
+                          const rawValue = e.target.value.replace(
+                            /[^0-9.]/g,
+                            "",
+                          );
+                          updateOrder(order, "adelanto", rawValue);
+                        }}
+                        onBlur={() => handleInputBlur(order._id)}
+                        style={{ borderBottom: "2px solid yellow" }}
+                      />
+                    </div>
+                    <div className="col col-stretch">
+                      <input
+                        readOnly
+                        value={`$${calculateTotal(order).toFixed(2)}`}
+                        style={{
+                          color: isPaid ? "gray" : "#ff4d4d",
+                          fontWeight: "bold",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
       </section>
     </div>
   );

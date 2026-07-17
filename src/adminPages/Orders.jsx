@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import "./Orders.css";
 
-// URL de tu API para las órdenes
 const API_URL = "https://wix-o3d-backend.onrender.com/api/orders";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 1. Cargar las órdenes desde MongoDB al abrir la página
   useEffect(() => {
     setIsLoading(true);
     fetch(API_URL)
@@ -20,7 +18,6 @@ function Orders() {
       });
   }, []);
 
-  // Función auxiliar para actualizar la base de datos y sincronizar los _id reales
   const saveOrderToDB = (updatedOrder) => {
     fetch(`${API_URL}/${updatedOrder._id}`, {
       method: "PUT",
@@ -29,7 +26,6 @@ function Orders() {
     })
       .then((res) => res.json())
       .then((savedOrder) => {
-        // Reemplazamos la orden local con la respuesta de DB (para asegurar que los _id de los productos estén bien)
         setOrders((prev) =>
           prev.map((o) => (o._id === savedOrder._id ? savedOrder : o)),
         );
@@ -37,15 +33,22 @@ function Orders() {
       .catch((err) => console.error("Error al guardar en MongoDB:", err));
   };
 
-  // 2. Crear un nuevo pedido en la base de datos
   const addOrder = () => {
     const newOrderTemplate = {
       client: "",
-      adelanto: "",
-      isEnviado: false,
-      isRecibido: false,
+      deuda: "",
       completedAt: null,
-      productos: [{ name: "", price: "", quantity: 1, isFabricated: false }],
+      productos: [
+        {
+          name: "",
+          price: "",
+          quantity: 1,
+          adelanto: "",
+          isFabricated: false,
+          isEnviado: false,
+          isRecibido: false,
+        },
+      ],
     };
 
     setIsLoading(true);
@@ -70,13 +73,14 @@ function Orders() {
           name: "",
           price: "",
           quantity: 1,
+          adelanto: "",
           isFabricated: false,
-        }, // Usamos tempId para no chocar con Mongoose
+          isEnviado: false,
+          isRecibido: false,
+        },
       ],
     };
-    // Actualizamos vista local al instante
     setOrders(orders.map((o) => (o._id === order._id ? updatedOrder : o)));
-    // Guardamos en BD para que Mongoose asigne un _id real al nuevo producto
     saveOrderToDB(updatedOrder);
   };
 
@@ -91,94 +95,127 @@ function Orders() {
     }
   };
 
-  // 3. Manejadores de cambios
   const updateOrder = (order, field, value) => {
     const updatedOrder = { ...order, [field]: value };
-
-    // Si tocamos "isEnviado" o "isRecibido", calculamos si la orden se completó hoy
-    if (field === "isEnviado" || field === "isRecibido") {
-      updatedOrder.completedAt =
-        updatedOrder.isEnviado && updatedOrder.isRecibido ? Date.now() : null;
-    }
-
-    // Siempre actualizamos el estado local (React)
     setOrders(orders.map((o) => (o._id === order._id ? updatedOrder : o)));
-
-    // Si es un Switch (booleano), guardamos INMEDIATAMENTE en base de datos
-    if (typeof value === "boolean") {
-      saveOrderToDB(updatedOrder);
-    }
   };
 
   const updateProduct = (order, productId, field, value) => {
-    const updatedOrder = {
-      ...order,
-      productos: order.productos.map((p) =>
-        p._id === productId || p.tempId === productId
-          ? { ...p, [field]: value }
-          : p,
-      ),
-    };
+    const updatedProductos = order.productos.map((p) =>
+      p._id === productId || p.tempId === productId
+        ? { ...p, [field]: value }
+        : p,
+    );
 
-    // Actualizar vista local
+    let updatedOrder = { ...order, productos: updatedProductos };
+
+    const allSent = updatedProductos.every((p) => p.isEnviado);
+    const allReceived = updatedProductos.every((p) => p.isRecibido);
+
+    // Si se tocan los switches de envío/recepción, verificar si toda la orden se completó
+    if (field === "isEnviado" || field === "isRecibido") {
+      updatedOrder.completedAt = allSent && allReceived ? Date.now() : null;
+    }
+
+    // SI LA ORDEN ESTÁ REALIZADA: recalculamos la deuda si toca envío/recepción o si el usuario modifica el adelanto, precio o cantidad.
+    if (
+      allSent &&
+      allReceived &&
+      (field === "isEnviado" ||
+        field === "isRecibido" ||
+        field === "adelanto" ||
+        field === "price" ||
+        field === "quantity")
+    ) {
+      const total = updatedProductos.reduce(
+        (sum, p) =>
+          sum + (parseFloat(p.price) || 0) * (parseInt(p.quantity) || 0),
+        0,
+      );
+      const adelantos = updatedProductos.reduce(
+        (sum, p) => sum + (parseFloat(p.adelanto) || 0),
+        0,
+      );
+      const restante = total - adelantos;
+
+      updatedOrder.deuda = restante > 0 ? restante.toString() : "0";
+    }
+
     setOrders(orders.map((o) => (o._id === order._id ? updatedOrder : o)));
 
-    // Si es el Switch de Fabricado, guardar inmediato en DB
     if (typeof value === "boolean") {
       saveOrderToDB(updatedOrder);
     }
   };
 
-  // Función que se llama cuando el usuario deja de escribir en un cuadro de texto (onBlur)
   const handleInputBlur = (orderId) => {
     const orderToSave = orders.find((o) => o._id === orderId);
     if (orderToSave) saveOrderToDB(orderToSave);
   };
 
-  // 4. Cálculo de Total
-  const calculateTotal = (order) => {
-    const subtotal = order.productos.reduce((sum, p) => {
-      const price = parseFloat(p.price) || 0;
-      const qty = parseInt(p.quantity) || 0;
-      return sum + price * qty;
-    }, 0);
-    const adelanto = parseFloat(order.adelanto) || 0;
-    const total = subtotal - adelanto;
+  // Cálculos dinámicos
+  const getProductTotal = (p) => {
+    const price = parseFloat(p.price) || 0;
+    const qty = parseInt(p.quantity) || 0;
+    return price * qty;
+  };
+
+  const getOrderTotal = (order) => {
+    return order.productos.reduce((sum, p) => sum + getProductTotal(p), 0);
+  };
+
+  const getOrderAdelantos = (order) => {
+    return order.productos.reduce(
+      (sum, p) => sum + (parseFloat(p.adelanto) || 0),
+      0,
+    );
+  };
+
+  const getOrderRestante = (order) => {
+    const total = getOrderTotal(order) - getOrderAdelantos(order);
     return total > 0 ? total : 0;
   };
 
-  // 5. Lógica de Filtrado (Embudo de ventas)
+  // Filtros (Embudo de ventas)
   const porFabricar = orders.filter(
     (o) =>
       !o.productos.every((p) => p.isFabricated) &&
-      !(o.isEnviado && o.isRecibido),
+      !o.productos.every((p) => p.isEnviado && p.isRecibido),
   );
 
   const porEnviar = orders.filter(
     (o) =>
       o.productos.every((p) => p.isFabricated) &&
-      !(o.isEnviado && o.isRecibido),
+      !o.productos.every((p) => p.isEnviado && p.isRecibido),
   );
 
-  let realizado = orders.filter(
-    (o) =>
-      o.productos.every((p) => p.isFabricated) && o.isEnviado && o.isRecibido,
+  let realizado = orders.filter((o) =>
+    o.productos.every((p) => p.isFabricated && p.isEnviado && p.isRecibido),
   );
 
-  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+  const ONE_MINUTE_MS = 7 * 24 * 60 * 60 * 1000;
+
   realizado = realizado.filter((o) => {
-    const total = calculateTotal(o);
-    if (total > 0) return true;
+    // Si el usuario escribió algo en Deuda, usamos eso. Si está vacío, calculamos el restante.
+    const hasManualDeuda =
+      o.deuda !== "" && o.deuda !== null && o.deuda !== undefined;
+    const deudaFinal = hasManualDeuda
+      ? parseFloat(o.deuda)
+      : getOrderRestante(o);
+
+    // Si la deuda final es mayor a 0, se queda en pantalla
+    if (deudaFinal > 0) return true;
+
+    // Si la deuda es 0, evaluamos el tiempo de expiración
     if (!o.completedAt) return true;
-    return Date.now() - new Date(o.completedAt).getTime() <= THIRTY_DAYS_MS;
+    return Date.now() - new Date(o.completedAt).getTime() <= ONE_MINUTE_MS;
   });
 
+  // Ordenar: Los pedidos con deuda mayor a 0 van primero (arriba)
   realizado.sort((a, b) => {
-    const totalA = calculateTotal(a);
-    const totalB = calculateTotal(b);
-    if (totalA > 0 && totalB === 0) return -1;
-    if (totalA === 0 && totalB > 0) return 1;
-    return 0;
+    const deudaA = parseFloat(a.deuda) || 0;
+    const deudaB = parseFloat(b.deuda) || 0;
+    return deudaB - deudaA; // Orden descendente
   });
 
   return (
@@ -207,8 +244,9 @@ function Orders() {
                 <label>Precio</label>
                 <label>Cantidad</label>
                 <label>Fab</label>
-                <label>Adelanto</label>
                 <label>Total</label>
+                <label>Adelanto</label>
+                <label>Restante</label>
               </div>
             )}
             {porFabricar.map((order) => (
@@ -224,7 +262,7 @@ function Orders() {
                       onBlur={() => handleInputBlur(order._id)}
                     />
                   </div>
-                  <div className="col col-center">
+                  <div className="col col-add">
                     <button
                       className="btn-round"
                       onClick={() => addProduct(order)}
@@ -316,23 +354,50 @@ function Orders() {
                       </label>
                     ))}
                   </div>
-                  <div className="col col-stretch">
-                    <input
-                      type="text"
-                      placeholder="$0.00"
-                      value={order.adelanto ? `$${order.adelanto}` : ""}
-                      onChange={(e) => {
-                        const rawValue = e.target.value.replace(/[^0-9.]/g, "");
-                        updateOrder(order, "adelanto", rawValue);
-                      }}
-                      onBlur={() => handleInputBlur(order._id)}
-                    />
+
+                  {/* Total individual (Solo Lectura) */}
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        readOnly
+                        value={`$${getProductTotal(p).toFixed(2)}`}
+                        style={{ color: "gray", borderColor: "gray" }}
+                      />
+                    ))}
                   </div>
+
+                  {/* Adelanto individual */}
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        type="text"
+                        placeholder="$0.00"
+                        value={p.adelanto ? `$${p.adelanto}` : ""}
+                        onChange={(e) => {
+                          const rawValue = e.target.value.replace(
+                            /[^0-9.]/g,
+                            "",
+                          );
+                          updateProduct(
+                            order,
+                            p._id || p.tempId,
+                            "adelanto",
+                            rawValue,
+                          );
+                        }}
+                        onBlur={() => handleInputBlur(order._id)}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Restante Total (Solo Lectura) */}
                   <div className="col col-stretch">
                     <input
                       readOnly
-                      value={`$${calculateTotal(order).toFixed(2)}`}
-                      style={{ color: "#4cd137" }}
+                      value={`$${getOrderRestante(order).toFixed(2)}`}
+                      style={{ color: "#4cd137", fontWeight: "bold" }}
                     />
                   </div>
                 </div>
@@ -358,8 +423,9 @@ function Orders() {
                 <label>Precio</label>
                 <label>Cantidad</label>
                 <label>Fab</label>
-                <label>Adelanto</label>
                 <label>Total</label>
+                <label>Adelanto</label>
+                <label>Restante</label>
               </div>
             )}
             {porEnviar.map((order) => (
@@ -375,26 +441,47 @@ function Orders() {
                       onBlur={() => handleInputBlur(order._id)}
                     />
                   </div>
-                  <div className="col col-center">
-                    <label className="switch" title="Enviado">
-                      <input
-                        type="checkbox"
-                        checked={order.isEnviado}
-                        onChange={(e) =>
-                          updateOrder(order, "isEnviado", e.target.checked)
-                        }
-                      />
-                    </label>
-                    <label className="switch" title="Recibido">
-                      <input
-                        type="checkbox"
-                        checked={order.isRecibido}
-                        onChange={(e) =>
-                          updateOrder(order, "isRecibido", e.target.checked)
-                        }
-                      />
-                    </label>
+
+                  {/* Switches E/R por producto */}
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <div
+                        className="col-center"
+                        key={p._id || p.tempId}
+                        style={{ height: "100%" }}
+                      >
+                        <label className="switch" title="Enviado">
+                          <input
+                            type="checkbox"
+                            checked={p.isEnviado}
+                            onChange={(e) =>
+                              updateProduct(
+                                order,
+                                p._id || p.tempId,
+                                "isEnviado",
+                                e.target.checked,
+                              )
+                            }
+                          />
+                        </label>
+                        <label className="switch" title="Recibido">
+                          <input
+                            type="checkbox"
+                            checked={p.isRecibido}
+                            onChange={(e) =>
+                              updateProduct(
+                                order,
+                                p._id || p.tempId,
+                                "isRecibido",
+                                e.target.checked,
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    ))}
                   </div>
+
                   <div className="col">
                     {order.productos.map((p) => (
                       <input key={p._id || p.tempId} value={p.name} readOnly />
@@ -436,23 +523,50 @@ function Orders() {
                       </label>
                     ))}
                   </div>
-                  <div className="col col-stretch">
-                    <input
-                      type="text"
-                      placeholder="$0.00"
-                      value={order.adelanto ? `$${order.adelanto}` : ""}
-                      onChange={(e) => {
-                        const rawValue = e.target.value.replace(/[^0-9.]/g, "");
-                        updateOrder(order, "adelanto", rawValue);
-                      }}
-                      onBlur={() => handleInputBlur(order._id)}
-                    />
+
+                  {/* Total individual (Solo Lectura) */}
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        readOnly
+                        value={`$${getProductTotal(p).toFixed(2)}`}
+                        style={{ color: "gray", borderColor: "gray" }}
+                      />
+                    ))}
                   </div>
+
+                  {/* Adelanto individual */}
+                  <div className="col">
+                    {order.productos.map((p) => (
+                      <input
+                        key={p._id || p.tempId}
+                        type="text"
+                        placeholder="$0.00"
+                        value={p.adelanto ? `$${p.adelanto}` : ""}
+                        onChange={(e) => {
+                          const rawValue = e.target.value.replace(
+                            /[^0-9.]/g,
+                            "",
+                          );
+                          updateProduct(
+                            order,
+                            p._id || p.tempId,
+                            "adelanto",
+                            rawValue,
+                          );
+                        }}
+                        onBlur={() => handleInputBlur(order._id)}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Restante Total (Solo Lectura) */}
                   <div className="col col-stretch">
                     <input
                       readOnly
-                      value={`$${calculateTotal(order).toFixed(2)}`}
-                      style={{ color: "#4cd137" }}
+                      value={`$${getOrderRestante(order).toFixed(2)}`}
+                      style={{ color: "#4cd137", fontWeight: "bold" }}
                     />
                   </div>
                 </div>
@@ -476,12 +590,23 @@ function Orders() {
                 <label>Producto</label>
                 <label>Precio</label>
                 <label>Cantidad</label>
+                <label>Total</label>
                 <label>Adelanto</label>
                 <label>Deuda</label>
               </div>
             )}
+
             {realizado.map((order) => {
-              const isPaid = calculateTotal(order) === 0;
+              // Sincronizamos la lógica visual con la del filtro
+              const hasManualDeuda =
+                order.deuda !== "" &&
+                order.deuda !== null &&
+                order.deuda !== undefined;
+              const deudaFinal = hasManualDeuda
+                ? parseFloat(order.deuda)
+                : getOrderRestante(order);
+              const isPaid = deudaFinal === 0;
+
               return (
                 <div
                   className="order-card"
@@ -519,27 +644,62 @@ function Orders() {
                         />
                       ))}
                     </div>
+
+                    {/* Total Individual (Lectura) */}
+                    <div className="col">
+                      {order.productos.map((p) => (
+                        <input
+                          key={p._id || p.tempId}
+                          readOnly
+                          value={`$${getProductTotal(p).toFixed(2)}`}
+                          style={{ color: "gray", borderColor: "gray" }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Adelanto Individual (Editable) */}
+                    <div className="col">
+                      {order.productos.map((p) => (
+                        <input
+                          key={p._id || p.tempId}
+                          type="text"
+                          placeholder="$0.00"
+                          value={p.adelanto ? `$${p.adelanto}` : ""}
+                          onChange={(e) => {
+                            const rawValue = e.target.value.replace(
+                              /[^0-9.]/g,
+                              "",
+                            );
+                            updateProduct(
+                              order,
+                              p._id || p.tempId,
+                              "adelanto",
+                              rawValue,
+                            );
+                          }}
+                          onBlur={() => handleInputBlur(order._id)}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Deuda General de la orden (Editable) */}
                     <div className="col col-stretch">
                       <input
                         type="text"
                         placeholder="$0.00"
-                        value={order.adelanto ? `$${order.adelanto}` : ""}
+                        value={order.deuda ? `$${order.deuda}` : ""}
                         onChange={(e) => {
                           const rawValue = e.target.value.replace(
                             /[^0-9.]/g,
                             "",
                           );
-                          updateOrder(order, "adelanto", rawValue);
+                          updateOrder(order, "deuda", rawValue);
                         }}
                         onBlur={() => handleInputBlur(order._id)}
-                        style={{ borderBottom: "2px solid yellow" }}
-                      />
-                    </div>
-                    <div className="col col-stretch">
-                      <input
-                        readOnly
-                        value={`$${calculateTotal(order).toFixed(2)}`}
                         style={{
+                          border: isPaid
+                            ? "2px dashed gray"
+                            : "2px solid #ff4d4d",
                           color: isPaid ? "gray" : "#ff4d4d",
                           fontWeight: "bold",
                         }}

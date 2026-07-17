@@ -80,15 +80,15 @@
 
 .order-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 2fr 2fr 2fr 1fr 2fr 2fr;
+  grid-template-columns: 2fr 1fr 2fr 2fr 2fr 1fr 2fr 2fr 2fr;
   gap: clamp(7px, 1vw, 10px);
   width: 100%;
 }
 
 .order-grid-realized {
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 2fr 2fr 2fr;
-  gap: 10px;
+  grid-template-columns: 2fr 2fr 2fr 2fr 2fr 2fr 2fr;
+  gap: clamp(7px, 1vw, 10px);
   width: 100%;
 }
 
@@ -123,6 +123,12 @@
   align-items: center;
 }
 
+.col-add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .col-center {
   display: flex;
   flex-direction: row;
@@ -135,7 +141,7 @@
 .order-grid textarea,
 .order-grid-realized input {
   width: 100%;
-  height: clamp(25px, 3vw, 30px);
+  height: clamp(45px, 3vw, 60px);
   border-radius: 20px;
   border: none;
   box-sizing: border-box;
@@ -148,13 +154,13 @@
 
   background-color: black;
   color: white;
-  border-bottom: solid 2px white;
+  border: solid 1px white;
 }
 
 .order-grid input[readonly],
 .order-grid-realized input[readonly] {
   background-color: transparent;
-  border-bottom: 2px dashed gray;
+  border: 2px dashed gray;
   cursor: default;
 }
 
